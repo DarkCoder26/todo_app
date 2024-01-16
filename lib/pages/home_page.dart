@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -8,12 +9,16 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   List<String> tasks = [];
   final myController = TextEditingController();
+  late AnimationController animationController;
 
+  @override
   void initState() {
+    super.initState;
     loadData();
+    animationController = AnimationController(vsync: this);
   }
 
   void loadData() async {
@@ -48,15 +53,29 @@ class _HomePageState extends State<HomePage> {
       body: Stack(
         alignment: Alignment.bottomRight,
         children: [
-          taskListView(),
+          isListEmpty(),
           Positioned(
-            bottom: 30,
+            bottom: 31,
             right: 20,
             child: addTaskButton(),
           ),
         ],
       ),
     );
+  }
+
+  Widget isListEmpty() {
+    if (tasks.isNotEmpty) {
+      return taskListView();
+    } else {
+      return Center(
+        child: Image.asset(
+          "assets/empty_animation.gif",
+          height: 125.0,
+          width: 125.0,
+        ),
+      );
+    }
   }
 
   Dialog buildCustomDialog() {
